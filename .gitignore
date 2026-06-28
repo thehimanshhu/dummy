@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.env
+.venv/
+.myenv/
+split/
+tmp/
+artifacts/
+*.pkl
+*.pickle
+.dvc/cache/
+data/v1
+data/v2
