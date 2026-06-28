@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.env
+.venv/
+venv/
+split/
+tmp/
+artifacts/
+*.joblib
+*.pkl
+*.pickle
+.dvc/cache/
