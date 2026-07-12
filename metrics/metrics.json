@@ -1,0 +1,23 @@
+{
+  "model_name": "week-2-model",
+  "run_timestamp": "training-20260628T081324207204Z",
+  "dataset": {
+    "train_data_uri": "split/train.csv",
+    "eval_data_uri": "split/test.csv"
+  },
+  "samples": {
+    "train": 29,
+    "eval": 20
+  },
+  "hyperparameters": {
+    "max_depth": 2,
+    "random_state": 2
+  },
+  "metrics": {
+    "accuracy": 1.0,
+    "precision_weighted": 1.0,
+    "recall_weighted": 1.0,
+    "f1_weighted": 1.0
+  },
+  "artifact_uri": "artifacts/week-2-model/training-20260628T081324207204Z"
+}

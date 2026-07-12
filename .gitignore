@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+reports/
+.venv/
+.myenv/
+.env
+data/iris.csv
+models/model.joblib
+feature_repo/data/
+data/entity_rows.csv
+week-2-submission/
