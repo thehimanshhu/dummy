@@ -33,6 +33,8 @@ jobs:
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          create_credentials_file: true
+          export_environment_variables: true
 
       - name: Pull DVC artifacts
         run: dvc pull
@@ -46,11 +48,11 @@ jobs:
           set -e
 
       - name: Generate model evaluation report
-        if: always()
+        if: success()
         run: python scripts/generate_cml_report.py
 
       - name: Run combined DVC and Feast validation
-        if: always()
+        if: success()
         env:
           PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           BIGQUERY_DATASET: iris_feast_week4
@@ -60,11 +62,11 @@ jobs:
         run: python scripts/dvc_feast_validation_pipeline.py
 
       - name: Publish CML report
-        if: always() && github.event_name == 'pull_request'
+        if: success() && github.event_name == 'pull_request'
         uses: iterative/setup-cml@v2
 
       - name: Comment CML report
-        if: always() && github.event_name == 'pull_request'
+        if: success() && github.event_name == 'pull_request'
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -81,5 +83,5 @@ jobs:
           cml comment create reports/cml-report.md
 
       - name: Fail if pytest failed
-        if: always()
+        if: success()
         run: exit "$(cat reports/pytest-exit-code.txt)"
