@@ -9,5 +9,4 @@ data/iris.csv
 models/model.joblib
 feature_repo/data/
 data/entity_rows.csv
-data
-models
+week-2-submission/

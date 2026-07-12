@@ -3,3 +3,4 @@ scikit-learn
 joblib
 python-dotenv
 dvc
+dvc-gs

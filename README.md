@@ -143,13 +143,18 @@ The workflow:
 Configure these secrets:
 
 ```text
-GCP_SERVICE_ACCOUNT_KEY
+GCP_WORKLOAD_IDENTITY_PROVIDER
+GCP_SERVICE_ACCOUNT
 GCP_PROJECT_ID
 ```
 
-`GCP_SERVICE_ACCOUNT_KEY` is the full JSON service account key with access to the DVC GCS remote and BigQuery.
+`GCP_WORKLOAD_IDENTITY_PROVIDER` is the full Workload Identity provider resource name.
+
+`GCP_SERVICE_ACCOUNT` is the service account email used by GitHub Actions.
 
 `GCP_PROJECT_ID` is the project used for the BigQuery offline store.
+
+No JSON service account key is required.
 
 ## Reports
 
