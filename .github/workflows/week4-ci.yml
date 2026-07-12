@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r week4-v1/requirements.txt
+          pip install -r requirements.txt
           pip install pytest dvc dvc-gs scikit-learn pandas joblib google-cloud-bigquery 'feast[gcp]'
 
       - name: Configure GCP credentials
@@ -35,20 +35,19 @@ jobs:
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       - name: Pull DVC artifacts
-        working-directory: week4-v1
         run: dvc pull
 
       - name: Run pytest
         run: |
-          mkdir -p week4-v1/reports
+          mkdir -p reports
           set +e
-          pytest week4-v1/tests --junitxml=week4-v1/reports/pytest-results.xml | tee week4-v1/reports/pytest-output.txt
-          echo "${PIPESTATUS[0]}" > week4-v1/reports/pytest-exit-code.txt
+          pytest tests --junitxml=reports/pytest-results.xml | tee reports/pytest-output.txt
+          echo "${PIPESTATUS[0]}" > reports/pytest-exit-code.txt
           set -e
 
       - name: Generate model evaluation report
         if: always()
-        run: python week4-v1/scripts/generate_cml_report.py
+        run: python scripts/generate_cml_report.py
 
       - name: Run combined DVC and Feast validation
         if: always()
@@ -58,7 +57,7 @@ jobs:
           BIGQUERY_TABLE: iris_features
           BIGQUERY_LOCATION: US
           INFERENCE_SAMPLE_IDS: 0,10,20
-        run: python week4-v1/scripts/dvc_feast_validation_pipeline.py
+        run: python scripts/dvc_feast_validation_pipeline.py
 
       - name: Publish CML report
         if: always() && github.event_name == 'pull_request'
@@ -72,15 +71,15 @@ jobs:
           {
             echo "## Pytest Output"
             echo '```'
-            cat week4-v1/reports/pytest-output.txt
+            cat reports/pytest-output.txt
             echo '```'
             echo
-            cat week4-v1/reports/evaluation_report.md
+            cat reports/evaluation_report.md
             echo
-            cat week4-v1/reports/dvc_feast_validation_report.md
-          } > week4-v1/reports/cml-report.md
-          cml comment create week4-v1/reports/cml-report.md
+            cat reports/dvc_feast_validation_report.md
+          } > reports/cml-report.md
+          cml comment create reports/cml-report.md
 
       - name: Fail if pytest failed
         if: always()
-        run: exit "$(cat week4-v1/reports/pytest-exit-code.txt)"
+        run: exit "$(cat reports/pytest-exit-code.txt)"

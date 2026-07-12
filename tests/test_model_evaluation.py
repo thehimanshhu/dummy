@@ -10,8 +10,8 @@ MIN_F1_WEIGHTED = 0.85
 
 
 def load_data_and_model():
-    assert DATA_PATH.exists(), f"Missing DVC data file: {DATA_PATH}. Run dvc pull in week4-v1."
-    assert MODEL_PATH.exists(), f"Missing DVC model file: {MODEL_PATH}. Run dvc pull in week4-v1."
+    assert DATA_PATH.exists(), f"Missing DVC data file: {DATA_PATH}. Run dvc pull from the repository root."
+    assert MODEL_PATH.exists(), f"Missing DVC model file: {MODEL_PATH}. Run dvc pull from the repository root."
     df = pd.read_csv(DATA_PATH, encoding="utf-8-sig")
     model = joblib.load(MODEL_PATH)
     return df, model

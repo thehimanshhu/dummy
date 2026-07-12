@@ -24,8 +24,6 @@ scripts/dvc_feast_validation_pipeline.py  Combined DVC + Feast validation report
 From the repository root:
 
 ```bash
-cd week4-v1
-
 python3 -m venv .venv
 source .venv/bin/activate
 
@@ -87,7 +85,7 @@ cat reports/dvc_feast_validation_report.md
 
 ## Combined DVC + Feast Pipeline
 
-The combined pipeline uses only files inside `week4-v1`:
+The combined pipeline uses only files in this repository:
 
 ```text
 DVC data: data/iris.csv
@@ -131,7 +129,7 @@ The workflow:
 1. Checks out the repository
 2. Installs dependencies
 3. Authenticates to Google Cloud
-4. Runs dvc pull inside week4-v1
+4. Runs dvc pull
 5. Runs pytest
 6. Generates model evaluation reports
 7. Runs combined DVC + Feast validation

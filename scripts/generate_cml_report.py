@@ -6,8 +6,7 @@ import pandas as pd
 from sklearn import metrics
 
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-WEEK4_DIR = REPO_ROOT / "week4-v1"
+WEEK4_DIR = Path(__file__).resolve().parents[1]
 DATA_PATH = WEEK4_DIR / "data" / "iris.csv"
 MODEL_PATH = WEEK4_DIR / "models" / "model.joblib"
 REPORT_DIR = Path(__file__).resolve().parents[1] / "reports"
@@ -49,9 +48,9 @@ def main():
 | Recall weighted | {metric_payload["recall_weighted"]:.4f} |
 | F1 weighted | {metric_payload["f1_weighted"]:.4f} |
 
-Data source: `week4-v1/data/iris.csv`
+Data source: `data/iris.csv`
 
-Model source: `week4-v1/models/model.joblib`
+Model source: `models/model.joblib`
 """
     REPORT_PATH.write_text(report, encoding="utf-8")
     print(report)

@@ -11,8 +11,7 @@ from google.cloud import bigquery
 from sklearn import metrics
 
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-WEEK4_DIR = REPO_ROOT / "week4-v1"
+WEEK4_DIR = Path(__file__).resolve().parents[1]
 FEATURE_REPO_PATH = WEEK4_DIR / "feature_repo"
 
 DATA_PATH = WEEK4_DIR / "data" / "iris.csv"
@@ -52,9 +51,9 @@ def require_inputs():
     if PROJECT_ID == "your-gcp-project-id":
         raise RuntimeError("Set PROJECT_ID before running the combined DVC + Feast pipeline.")
     if not DATA_PATH.exists():
-        raise FileNotFoundError(f"Missing DVC data file: {DATA_PATH}. Run dvc pull in week4-v1.")
+        raise FileNotFoundError(f"Missing DVC data file: {DATA_PATH}. Run dvc pull from the repository root.")
     if not MODEL_PATH.exists():
-        raise FileNotFoundError(f"Missing DVC model file: {MODEL_PATH}. Run dvc pull in week4-v1.")
+        raise FileNotFoundError(f"Missing DVC model file: {MODEL_PATH}. Run dvc pull from the repository root.")
     if not FEATURE_REPO_PATH.exists():
         raise FileNotFoundError(f"Missing Feast repo: {FEATURE_REPO_PATH}")
 

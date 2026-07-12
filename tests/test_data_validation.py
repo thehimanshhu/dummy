@@ -4,7 +4,7 @@ from conftest import DATA_PATH, EXPECTED_LABELS, FEATURE_COLUMNS, TARGET_COLUMN
 
 
 def load_dataset():
-    assert DATA_PATH.exists(), f"Missing DVC data file: {DATA_PATH}. Run dvc pull in week4-v1."
+    assert DATA_PATH.exists(), f"Missing DVC data file: {DATA_PATH}. Run dvc pull from the repository root."
     return pd.read_csv(DATA_PATH, encoding="utf-8-sig")
 
 
