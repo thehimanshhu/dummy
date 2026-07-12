@@ -1,0 +1,10 @@
+project: iris_feature_store
+provider: gcp
+registry: data/registry.db
+offline_store:
+  type: bigquery
+  dataset: iris_feast_week4
+online_store:
+  type: sqlite
+  path: data/online_store.db
+entity_key_serialization_version: 3

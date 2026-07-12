@@ -1,0 +1,84 @@
+name: Week 4 Iris CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test-iris-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r week4-v1/requirements.txt
+          pip install pytest dvc dvc-gs scikit-learn pandas joblib google-cloud-bigquery 'feast[gcp]'
+
+      - name: Configure GCP credentials
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Pull DVC artifacts
+        working-directory: week4-v1
+        run: dvc pull
+
+      - name: Run pytest
+        run: |
+          mkdir -p week4-v1/reports
+          set +e
+          pytest week4-v1/tests --junitxml=week4-v1/reports/pytest-results.xml | tee week4-v1/reports/pytest-output.txt
+          echo "${PIPESTATUS[0]}" > week4-v1/reports/pytest-exit-code.txt
+          set -e
+
+      - name: Generate model evaluation report
+        if: always()
+        run: python week4-v1/scripts/generate_cml_report.py
+
+      - name: Run combined DVC and Feast validation
+        if: always()
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          BIGQUERY_DATASET: iris_feast_week4
+          BIGQUERY_TABLE: iris_features
+          BIGQUERY_LOCATION: US
+          INFERENCE_SAMPLE_IDS: 0,10,20
+        run: python week4-v1/scripts/dvc_feast_validation_pipeline.py
+
+      - name: Publish CML report
+        if: always() && github.event_name == 'pull_request'
+        uses: iterative/setup-cml@v2
+
+      - name: Comment CML report
+        if: always() && github.event_name == 'pull_request'
+        env:
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo "## Pytest Output"
+            echo '```'
+            cat week4-v1/reports/pytest-output.txt
+            echo '```'
+            echo
+            cat week4-v1/reports/evaluation_report.md
+            echo
+            cat week4-v1/reports/dvc_feast_validation_report.md
+          } > week4-v1/reports/cml-report.md
+          cml comment create week4-v1/reports/cml-report.md
+
+      - name: Fail if pytest failed
+        if: always()
+        run: exit "$(cat week4-v1/reports/pytest-exit-code.txt)"
