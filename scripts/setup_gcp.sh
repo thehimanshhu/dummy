@@ -12,6 +12,41 @@ SERVICE_ACCOUNT_ID="${SERVICE_ACCOUNT_ID:-github-actions-week6}"
 WIF_POOL_ID="${WIF_POOL_ID:-github-pool-week6}"
 WIF_PROVIDER_ID="${WIF_PROVIDER_ID:-github-provider-week6}"
 
+wait_for_service_account() {
+  local attempt
+
+  for attempt in {1..12}; do
+    if gcloud iam service-accounts describe "${SERVICE_ACCOUNT}" \
+      --project="${PROJECT_ID}" >/dev/null 2>&1; then
+      return 0
+    fi
+    printf 'Waiting for service account IAM propagation (%s/12)...\n' "${attempt}"
+    sleep 5
+  done
+
+  printf 'Service account did not become available: %s\n' "${SERVICE_ACCOUNT}" >&2
+  return 1
+}
+
+add_project_role() {
+  local role="$1"
+  local attempt
+
+  for attempt in {1..6}; do
+    if gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
+      --member="serviceAccount:${SERVICE_ACCOUNT}" \
+      --role="${role}" \
+      --quiet; then
+      return 0
+    fi
+    printf 'Retrying IAM role %s (%s/6)...\n' "${role}" "${attempt}"
+    sleep 10
+  done
+
+  printf 'Could not grant IAM role: %s\n' "${role}" >&2
+  return 1
+}
+
 gcloud config set project "${PROJECT_ID}"
 gcloud services enable \
   artifactregistry.googleapis.com \
@@ -41,19 +76,20 @@ if ! gcloud container clusters describe "${GKE_CLUSTER}" \
     --release-channel=regular
 fi
 
-if ! gcloud iam service-accounts describe "${SERVICE_ACCOUNT}" >/dev/null 2>&1; then
+if ! gcloud iam service-accounts describe "${SERVICE_ACCOUNT}" \
+  --project="${PROJECT_ID}" >/dev/null 2>&1; then
   gcloud iam service-accounts create "${SERVICE_ACCOUNT_ID}" \
+    --project="${PROJECT_ID}" \
     --display-name="GitHub Actions Week 6 CD"
 fi
+
+wait_for_service_account
 
 for role in \
   roles/artifactregistry.writer \
   roles/container.developer \
   roles/storage.objectViewer; do
-  gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
-    --member="serviceAccount:${SERVICE_ACCOUNT}" \
-    --role="${role}" \
-    --quiet
+  add_project_role "${role}"
 done
 
 NODE_SERVICE_ACCOUNT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
