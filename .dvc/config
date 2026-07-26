@@ -1,0 +1,4 @@
+[core]
+    remote = gcsremote
+['remote "gcsremote"']
+    url = gs://mlops-course-project-5af14217-0027-40e0-873-unique/week_2/dvc-store

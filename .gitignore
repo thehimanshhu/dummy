@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+models/model.joblib
+gha-creds-*.json
+GA6.pdf
+screencast_script.md
