@@ -3,7 +3,7 @@ name: Week 6 Iris API CD
 on:
   push:
     branches:
-      - week_6
+      - week-6-demo
   pull_request:
   workflow_dispatch:
 
